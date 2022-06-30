@@ -1,0 +1,41 @@
+---
+title: "Country"
+output: html_document
+date: '2022-06-30'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidycensus)
+library(ggthemes)
+library(tigris)
+```
+
+```{r}
+load_variables(2018, "acs5") |> 
+  filter(concept == "RACE")
+racevars<- c("B02001_002","B02001_003","B02001_005","B03003_003")
+```
+
+```{r}
+county_data<-get_acs(geography = "tract",
+        variables=racevars,
+        year=2018,
+        state="texas",
+        county="Harris County",
+        geometry=TRUE,
+        summary_var="B02001_001") |> 
+  mutate(Percent=estimate/summary_est*100) |> 
+  ggplot(aes(fill=Percent,color=Percent))+
+  geom_sf()+
+  facet_wrap("variable")+
+  scale_fill_viridis_c(direction=-1)+
+  scale_color_viridis_c(direction=-1)+
+  theme_void()+
+  labs(title="Racial geography of Harris County,Texas",
+       caption="cool caption")
+county_data
+```
+
+

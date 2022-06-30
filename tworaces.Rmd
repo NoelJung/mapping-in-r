@@ -1,0 +1,43 @@
+---
+title: "tworaces"
+output: html_document
+date: '2022-06-30'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidycensus)
+library(ggthemes)
+library(tigris)
+```
+
+```{r}
+load_variables(2018, "acs5") |> filter(concept == "RACE")
+```
+
+```{r}
+continental<-state.name[! state.name %in% c("Alaska", "Hawaii")]
+races<-county_data<-get_acs(geography = "tract",
+        variables="B02001_008",
+        year=2018,
+        state=continental,
+        geometry=TRUE,
+        summary_var="B02001_001")
+
+graph<-races |> 
+  mutate(Percent=estimate/summary_est*100) |> 
+  ggplot(aes(fill=Percent))+
+  geom_sf(size=0.003)+
+  scale_fill_viridis_c(direction=-1,option="inferno")+
+  theme_void()+
+  labs(title="Percent of Peopel Who are Two or More Races by Census Tract",
+       caption="Source: American Census Survey 2014-2018")
+
+write_rds(graph,"races_map.rds")
+```
+
+```{r}
+read_rds("races_map.rds")
+```
+

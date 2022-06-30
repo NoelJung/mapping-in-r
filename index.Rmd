@@ -1,0 +1,15 @@
+---
+title: "Cool"
+output: html_document
+date: '2022-06-30'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidycensus)
+library(ggthemes)
+library(tigris)
+```
+
+My name is Noel Jung and I will be creating maps based on data provided by the US Census Bureau.
